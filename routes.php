@@ -16,6 +16,9 @@ App::before(function($request) {
 
     $locale = Request::segment(1);
 
+    /*
+     * If logged into backend don't interfere with the default/session locale
+     */
     if ($locale == 'backend') {
         return;
     }
