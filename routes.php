@@ -130,6 +130,8 @@ function findMatches($accepted, $available) {
 // compare two language tags and distinguish the degree of matching
 // edit: actually matching "en-us" with "en" will always return "1"
 function matchLanguage($a, $b) {
+    // convert 'en-US' to 'en-us'
+    $b = strtolower($b);
     $a = explode('-', $a);
     $b = explode('-', $b);
     for ($i=0, $n=min(count($a), count($b)); $i<$n; $i++) {
