@@ -8,6 +8,7 @@
 
 use RainLab\Translate\Classes\Translator;
 use RainLab\Translate\Models\Locale;
+use Session;
 
 App::before(function($request) {
     $translator = Translator::instance();
@@ -28,7 +29,7 @@ App::before(function($request) {
      * Behavior when there is no locale in the Request URL, first check in session and then try to match with default browser language
      */
     if (!$locale || !Locale::isValid($locale)) {
-        $localeSession = $translator->getLocale(true);
+        $localeSession = Session::get($translator::SESSION_LOCALE);
         if ($localeSession) {
             $translator->setLocale($localeSession);
         } else {
@@ -38,9 +39,11 @@ App::before(function($request) {
             // match against languages enabled in Translate plugin
             // TODO: allow october backend users to create their own mappings to the locale short codes
             $matches = findMatches($accepted, $available);
-            // get the first match
-            $match = array_values($matches)[0];
-            $translator->setLocale($match);
+            // get the first match and save if not empty
+            if (!empty($matches)) {
+                $match = array_values($matches)[0];
+                $translator->setLocale($match);
+            }
         }
     }
 
