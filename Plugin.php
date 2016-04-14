@@ -1,11 +1,10 @@
-<?php namespace Excodus\TranslateRedirector;
+<?php namespace Excodus\TranslateExtended;
 
 use Backend;
 use System\Classes\PluginBase;
-use RainLab\Translate\Classes\Translator;
 use URL;
 /**
- * Translate-redirector Plugin Information File
+ * Translate Extended Plugin Information File
  */
 class Plugin extends PluginBase
 {
@@ -18,7 +17,7 @@ class Plugin extends PluginBase
     public function pluginDetails()
     {
         return [
-            'name'        => 'Translate Redirector',
+            'name'        => 'Translate Extended',
             'description' => 'Extends behavior of the default Translate Plugin',
             'author'      => 'Excodus',
             'icon'        => 'icon-leaf'

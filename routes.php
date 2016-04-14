@@ -8,7 +8,6 @@
 
 use RainLab\Translate\Classes\Translator;
 use RainLab\Translate\Models\Locale;
-use Session;
 
 App::before(function($request) {
     $translator = Translator::instance();
