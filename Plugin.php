@@ -18,11 +18,16 @@ class Plugin extends PluginBase
     {
         return [
             'name'        => 'Translate Extended',
-            'description' => 'Extends behavior of the default Translate Plugin',
+            'description' => 'Adds browser\'s language detection and language route prefixes to the Rainlab\'s Translate plugin.',
             'author'      => 'Excodus',
             'icon'        => 'icon-leaf'
         ];
     }
+
+    /**
+     * @var array Plugin dependencies
+     */
+    public $require = ['RainLab.Translate'];
 
     /**
      * Registers any front-end components implemented in this plugin.
