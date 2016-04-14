@@ -8,7 +8,6 @@
 
 use RainLab\Translate\Classes\Translator;
 use RainLab\Translate\Models\Locale;
-use Cookie;
 
 App::before(function($request) {
     $translator = Translator::instance();
@@ -24,15 +23,14 @@ App::before(function($request) {
      */
     if (post('locale') && $locale != post('locale')) {
         $translator->setLocale(post('locale'));
-        Cookie::queue('locale', post('locale'), 10080);
     }
     /*
-     * Behavior when there is no locale in the Request URL, first check cookies and then try to match with default browser language
+     * Behavior when there is no locale in the Request URL, first check in session and then try to match with default browser language
      */
-    if (!$locale) {
-        $cookieLocale = Cookie::get('locale');
-        if ($cookieLocale) {
-            $translator->setLocale($cookieLocale);
+    if (!$locale || !Locale::isValid($locale)) {
+        $localeSession = $translator->getLocale(true);
+        if ($localeSession) {
+            $translator->setLocale($localeSession);
         } else {
             // get the list of browser languages
             $accepted = parseLanguageList($_SERVER['HTTP_ACCEPT_LANGUAGE']);
@@ -67,7 +65,6 @@ App::before(function($request) {
     Route::get('/', function() use ($locale) {
         return redirect($locale);
     });
-
 });
 
 // browser language parser based on Gumbo's answer
