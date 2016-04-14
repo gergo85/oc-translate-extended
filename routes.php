@@ -16,6 +16,10 @@ App::before(function($request) {
 
     $locale = Request::segment(1);
 
+    if ($locale == 'backend') {
+        return;
+    }
+    
     /*
      * Behavior when changing locale from the locale picker; post('locale') has priority over $locale,
      * because Request still have old locale in the URL, hence $locale is outdated and User sends new locale in the POST
