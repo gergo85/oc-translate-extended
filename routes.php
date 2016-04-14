@@ -53,6 +53,7 @@ App::before(function($request) {
         $translator->setLocale($translator->getDefaultLocale());
     }
 
+    // TODO: allow users to opt-in to route redirecting and leave only browser language detection
     Route::group(['prefix' => $locale], function() {
         Route::any('{slug}', 'Cms\Classes\CmsController@run')->where('slug', '(.*)?');
     });

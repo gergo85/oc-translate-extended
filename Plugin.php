@@ -2,7 +2,8 @@
 
 use Backend;
 use System\Classes\PluginBase;
-
+use RainLab\Translate\Classes\Translator;
+use URL;
 /**
  * Translate-redirector Plugin Information File
  */
@@ -75,4 +76,27 @@ class Plugin extends PluginBase
         ];
     }
 
+//    TODO: allow users to opt-in into extending |app twig filter
+//    /**
+//     * Lets extend the app filter.
+//     * @return array
+//     */
+//    public function registerMarkupTags()
+//    {
+//        return [
+//            'filters' => [
+//                'app' => [$this, 'appFilter'],
+//            ]
+//        ];
+//    }
+//
+//    /**
+//     * Extends the classic app filter
+//     * @param  string $url
+//     * @return string
+//     */
+//    public function appFilter($url)
+//    {
+//        return URL::to(Translator::instance()->getLocale() . '/' . $url);
+//    }
 }
