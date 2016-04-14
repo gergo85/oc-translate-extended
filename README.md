@@ -1,5 +1,5 @@
 # Translate Extended
-This plugins extends default behavior of the Rainlab's Tranlsate plugin (http://octobercms.com/plugin/rainlab-translate) with following features:
+This plugins extends default behavior of the Rainlab's Translate plugin (http://octobercms.com/plugin/rainlab-translate) with following features:
  * detect browser language
  * display (and save into session) most preferred browser language instead of the default one
  * redirect all routes with proper locale prefix
