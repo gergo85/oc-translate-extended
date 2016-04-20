@@ -1,4 +1,6 @@
 1.0.1:
     - First version of Translate Extended
 1.0.2:
+    - Bug fixes
+    - Improved browser language matching
     - Added backend settings page with option to opt-out from the browser lang detection and route prefixing

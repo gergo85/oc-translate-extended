@@ -37,10 +37,6 @@ class Plugin extends PluginBase
     public function registerComponents()
     {
         return []; // Remove this line to activate
-
-        return [
-            'Excodus\TranslateRedirector\Components\MyComponent' => 'myComponent',
-        ];
     }
 
     /**

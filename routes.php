@@ -36,7 +36,7 @@ App::before(function($request) {
      * Behavior when there is no locale in the Request URL, first check in session and then try to match with default browser language
      */
     if (!$locale || !Locale::isValid($locale)) {
-        if ($localeSession) {
+        if (Settings::get('prefer_user_session') && $localeSession) {
             $translator->setLocale($localeSession);
         } else {
             if(Settings::get('browser_language_detection')) {
