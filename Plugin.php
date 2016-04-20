@@ -18,7 +18,7 @@ class Plugin extends PluginBase
     {
         return [
             'name'        => 'Translate Extended',
-            'description' => 'Adds browser\'s language detection and language route prefixes to the Rainlab\'s Translate plugin.',
+            'description' => 'excodus.translateextended::lang.strings.plugin_desc',
             'author'      => 'Excodus',
             'icon'        => 'icon-leaf'
         ];
@@ -50,33 +50,26 @@ class Plugin extends PluginBase
      */
     public function registerPermissions()
     {
-        return []; // Remove this line to activate
-
         return [
-            'excodus.translate-redirector.some_permission' => [
-                'tab' => 'Translate-redirector',
-                'label' => 'Some permission'
+            'excodus.translateextended.access_settings' => [
+                'tab'   => 'excodus.translateextended::lang.permissions.tab',
+                'label' => 'excodus.translateextended::lang.permissions.settings'
             ],
         ];
     }
 
-    /**
-     * Registers back-end navigation items for this plugin.
-     *
-     * @return array
-     */
-    public function registerNavigation()
+    public function registerSettings()
     {
-        return []; // Remove this line to activate
-
         return [
-            'translate-redirector' => [
-                'label'       => 'translate-redirector',
-                'url'         => Backend::url('excodus/translate-redirector/mycontroller'),
-                'icon'        => 'icon-leaf',
-                'permissions' => ['excodus.translate-redirector.*'],
-                'order'       => 500,
-            ],
+            'translateextended' => [
+                'label'       => 'excodus.translateextended::lang.strings.settings_label',
+                'description' => 'excodus.translateextended::lang.strings.settings_desc',
+                'icon'        => 'icon-language',
+                'class'       => 'Excodus\TranslateExtended\Models\Settings',
+                'order'       => 552,
+                'category'    => 'rainlab.translate::lang.plugin.name',
+                'permissions' => ['excodus.translateextended.access_settings']
+            ]
         ];
     }
 

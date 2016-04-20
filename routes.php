@@ -6,23 +6,23 @@
  * Time: 16:12
  */
 
+use Excodus\TranslateExtended\Models\Settings;
 use RainLab\Translate\Classes\Translator;
 use RainLab\Translate\Models\Locale;
 
 App::before(function($request) {
+
+    if (App::runningInBackend()) {
+        return;
+    }
+
     $translator = Translator::instance();
     if (!$translator->isConfigured())
         return;
 
     $locale = Request::segment(1);
+    $localeSession = Session::get($translator::SESSION_LOCALE);
 
-    /*
-     * If logged into backend don't interfere with the default/session locale
-     */
-    if ($locale == 'backend') {
-        return;
-    }
-    
     /*
      * Behavior when changing locale from the locale picker; post('locale') has priority over $locale,
      * because Request still have old locale in the URL, hence $locale is outdated and User sends new locale in the POST
@@ -31,50 +31,57 @@ App::before(function($request) {
     if (post('locale') && $locale != post('locale')) {
         $translator->setLocale(post('locale'));
     }
+
     /*
      * Behavior when there is no locale in the Request URL, first check in session and then try to match with default browser language
      */
     if (!$locale || !Locale::isValid($locale)) {
-        $localeSession = Session::get($translator::SESSION_LOCALE);
         if ($localeSession) {
             $translator->setLocale($localeSession);
         } else {
-            // get the list of browser languages
-            $accepted = parseLanguageList($_SERVER['HTTP_ACCEPT_LANGUAGE']);
-            $available = Locale::listEnabled();
-            // match against languages enabled in Translate plugin
-            // TODO: allow october backend users to create their own mappings to the locale short codes
-            $matches = findMatches($accepted, $available);
-            // get the first match and save if not empty
-            if (!empty($matches)) {
-                $match = array_values($matches)[0];
-                $translator->setLocale($match);
+            if(Settings::get('browser_language_detection')) {
+
+                // get the list of browser languages
+                $accepted = parseLanguageList($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+                $available = Locale::listEnabled();
+                // match against languages enabled in Translate plugin
+                // TODO: allow october backend users to create their own mappings to the locale short codes
+                $matches = findMatches($accepted, $available);
+                // get the first match and save if not empty
+                if (!empty($matches)) {
+                    $match = array_keys($matches)[0];
+                    $translator->setLocale($match);
+                }
             }
         }
     }
 
+    /*
+      * If it was unable to retrieve locale from session, route url or browser matching, just roll back to default locale
+    */
     $locale = $translator->getLocale();
 
-    if ($translator->setLocale($locale) === false) {
+    if (!Locale::isValid($locale)) {
         $translator->setLocale($translator->getDefaultLocale());
     }
 
-    // TODO: allow users to opt-in to route redirecting and leave only browser language detection
-    Route::group(['prefix' => $locale], function() {
-        Route::any('{slug}', 'Cms\Classes\CmsController@run')->where('slug', '(.*)?');
-    });
-
-    Route::any($locale, 'Cms\Classes\CmsController@run');
-
-    Event::listen('cms.route', function() use ($locale) {
+    if(Settings::get('route_prefixing')) {
         Route::group(['prefix' => $locale], function() {
             Route::any('{slug}', 'Cms\Classes\CmsController@run')->where('slug', '(.*)?');
         });
-    });
 
-    Route::get('/', function() use ($locale) {
-        return redirect($locale);
-    });
+        Route::any($locale, 'Cms\Classes\CmsController@run');
+
+        Event::listen('cms.route', function() use ($locale) {
+            Route::group(['prefix' => $locale], function() {
+                Route::any('{slug}', 'Cms\Classes\CmsController@run')->where('slug', '(.*)?');
+            });
+        });
+
+        Route::get('/', function() use ($locale) {
+            return redirect($locale);
+        });
+    }
 });
 
 // browser language parser based on Gumbo's answer
@@ -110,18 +117,18 @@ function parseLanguageList($languageList) {
 function findMatches($accepted, $available) {
     $matches = array();
     $any = false;
-    foreach ($accepted as $acceptedQuality => $acceptedValue) {
+    foreach ($available as $availableLocale => $availableName) {
+        foreach ($accepted as $acceptedQuality => $acceptedLocale) {
         $acceptedQuality = floatval($acceptedQuality);
         if ($acceptedQuality === 0.0) continue;
-        foreach ($available as $key => $value) {
-            if ($acceptedValue === '*') {
+            if ($acceptedLocale === '*') {
                 $any = true;
             }
-            $matchingGrade = matchLanguage($acceptedValue, $key);
+            $matchingGrade = matchLanguage($acceptedLocale, $availableLocale);
             if ($matchingGrade > 0) {
-                $q = (string) ($acceptedQuality * $matchingGrade);
-                if (!in_array($q, $matches)) {
-                    $matches[$q] = $key;
+                $q = ($acceptedQuality * $matchingGrade);
+                if (!array_key_exists($availableLocale, $matches) || $matches[$availableLocale] < $q) {
+                    $matches[$availableLocale] = $q;
                 }
             }
         }
@@ -129,20 +136,31 @@ function findMatches($accepted, $available) {
     if (count($matches) === 0 && $any) {
         $matches = $available;
     }
-    krsort($matches);
+    arsort($matches);
     return $matches;
 }
 
-// compare two language tags and distinguish the degree of matching
-// edit: actually matching "en-us" with "en" will always return "1"
+
+/**
+ * compare two language tags and distinguish the degree of matching 
+ * edit: actually matching "en-us" with "en" will always return "1"
+ * @param $a [] user-accepted
+ * @param $b [] backend-available
+ * @return float|int
+ */
 function matchLanguage($a, $b) {
     // convert 'en-US' to 'en-us'
     $b = strtolower($b);
     $a = explode('-', $a);
     $b = explode('-', $b);
+    $perfect_match = false;
     for ($i=0, $n=min(count($a), count($b)); $i<$n; $i++) {
         if ($a[$i] !== $b[$i]) break;
+        if (count($a) == count($b) && $i == $n-1) {
+            $perfect_match = true;
+        }
     }
-//    return $i === 0 ? 0 : (float) $i / count($a);
-    return $i;
+
+    $val = $i === 0 ? 0 : (float) $i / count($a);
+    return $perfect_match ? 2 : $val;
 }
