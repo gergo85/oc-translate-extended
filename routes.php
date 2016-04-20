@@ -36,10 +36,10 @@ App::before(function($request) {
      * Behavior when there is no locale in the Request URL, first check in session and then try to match with default browser language
      */
     if (!$locale || !Locale::isValid($locale)) {
-        if (Settings::get('prefer_user_session') && $localeSession) {
+        if (Settings::get('prefer_user_session',true) && $localeSession) {
             $translator->setLocale($localeSession);
         } else {
-            if(Settings::get('browser_language_detection')) {
+            if(Settings::get('browser_language_detection',true)) {
 
                 // get the list of browser languages
                 $accepted = parseLanguageList($_SERVER['HTTP_ACCEPT_LANGUAGE']);
@@ -65,7 +65,7 @@ App::before(function($request) {
         $translator->setLocale($translator->getDefaultLocale());
     }
 
-    if(Settings::get('route_prefixing')) {
+    if(Settings::get('route_prefixing', true)) {
         Route::group(['prefix' => $locale], function() {
             Route::any('{slug}', 'Cms\Classes\CmsController@run')->where('slug', '(.*)?');
         });
