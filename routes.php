@@ -11,11 +11,8 @@ use RainLab\Translate\Classes\Translator;
 use RainLab\Translate\Models\Locale;
 
 App::before(function($request) {
-
-    if (App::runningInBackend()) {
+    if (App::runningInBackend())
         return;
-    }
-
     $translator = Translator::instance();
     if (!$translator->isConfigured())
         return;
@@ -56,31 +53,49 @@ App::before(function($request) {
         }
     }
 
+    $locale = $translator->getLocale();
+
     /*
       * If it was unable to retrieve locale from session, route url or browser matching, just roll back to default locale
     */
-    $locale = $translator->getLocale();
-
     if (!Locale::isValid($locale)) {
         $translator->setLocale($translator->getDefaultLocale());
+        $locale = $translator->getLocale();
     }
 
     if(Settings::get('route_prefixing', true)) {
-        Route::group(['prefix' => $locale], function() {
-            Route::any('{slug}', 'Cms\Classes\CmsController@run')->where('slug', '(.*)?');
+        Route::get('/', function () use ($locale) {
+            return Redirect::to($locale);
         });
 
-        Route::any($locale, 'Cms\Classes\CmsController@run');
-
         Event::listen('cms.route', function() use ($locale) {
-            Route::group(['prefix' => $locale], function() {
+            Route::group(['prefix' => $locale], function() use ($locale)  {
                 Route::any('{slug}', 'Cms\Classes\CmsController@run')->where('slug', '(.*)?');
             });
         });
+    }
+});
 
-        Route::get('/', function() use ($locale) {
-            return redirect($locale);
-        });
+Route::matched(function($route, $request) {
+    if (App::runningInBackend())
+        return;
+    $translator = Translator::instance();
+    if (!$translator->isConfigured())
+        return;
+    $locale = $translator->getLocale();
+
+    if(Settings::get('route_prefixing', true)) {
+        $prefix = $route->getPrefix();
+        $uri = $route->getUri();
+        $available = Locale::listEnabled();
+        if($prefix == null) {
+            if (!in_array($uri, array_keys($available))) {
+                $route->prefix($locale);
+            }
+        } else if ($prefix != $locale && in_array($prefix, array_keys($available))) {
+            $route->setUri(trim($uri, $prefix . '/'));
+            $route->prefix($locale);
+        }
     }
 });
 
