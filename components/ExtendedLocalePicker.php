@@ -33,6 +33,10 @@ class ExtendedLocalePicker extends ComponentBase
     {
         $this->page['activeLocale'] = $this->activeLocale = $this->translator->getLocale();
         $this->page['locales'] = $this->locales = LocaleModel::listEnabled();
-        $this->page['currentPath'] = $this->getRouter()->getUrl();
+        $currentPath = $this->getRouter()->getUrl();
+        if($currentPath[0] != '/') {
+            $currentPath = '/' . $currentPath;
+        }
+        $this->page['currentPath'] = $currentPath;
     }
 }
