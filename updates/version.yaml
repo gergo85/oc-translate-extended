@@ -6,3 +6,5 @@
     - Improved browser language matching
 1.0.3:
     - Fixed default plugin settings
+1.0.4:
+    - Added extended locale picker
