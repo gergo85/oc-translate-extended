@@ -18,3 +18,8 @@ fields:
     comment: excodus.translateextended::lang.strings.route_prefixing_comment
     type: switch
     default: true
+  homepage_redirect:
+    label: excodus.translateextended::lang.strings.homepage_redirect
+    comment: excodus.translateextended::lang.strings.homepage_redirect_comment
+    type: switch
+    default: true

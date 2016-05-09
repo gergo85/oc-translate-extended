@@ -10,7 +10,9 @@ return [
         'route_prefixing'            => 'Prefixy w ścieżkach',
         'route_prefixing_comment'    => 'Włącza prefixy językowe w ścieżkach URL.',
         'prefer_user_session'           => 'Preferuj ustawienia sesji użytkownika',
-        'prefer_user_session_comment'   => 'Jeśli włączone, język ustawiony w sesji użytkownika będzie miał wyższy priorytet niż preferowany język przeglądarki. Jeśli wyłączone, preferowany język będzie wykrywany za każdym razem gdy użytkownik wchodzi na stronę.'
+        'prefer_user_session_comment'   => 'Jeśli włączone, język ustawiony w sesji użytkownika będzie miał wyższy priorytet niż preferowany język przeglądarki. Jeśli wyłączone, preferowany język będzie wykrywany za każdym razem gdy użytkownik wchodzi na stronę.',
+        'homepage_redirect'             => 'Homepage redirect',
+        'homepage_redirect_comment'     => 'Jeśli włączone, kod języka będzie dodawany do adresu URL strony startowej.'
     ],
     'permissions' => [
         'tab'      => 'Excodus',

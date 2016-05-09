@@ -11,6 +11,8 @@ return [
         'route_prefixing_comment'    => 'Enables locale prefixes in the route URL.',
         'prefer_user_session'           => 'Prefer user session over auto detected language',
         'prefer_user_session_comment'   => 'If enabled, language set in user session will have priority over preferred browser language. If disabled locale will be detected every time user re-enters the website.',
+        'homepage_redirect'             => 'Homepage redirect',
+        'homepage_redirect_comment'     => 'If enabled, locale shortcode will be added to homepage URL.'
     ],
     'permissions' => [
         'tab'      => 'Excodus',

@@ -77,9 +77,12 @@ App::before(function($request) {
             });
         });
 
-        Route::get('/', function() use ($locale) {
-            return redirect($locale);
-        });
+        if(Settings::get('homepage_redirect', true)) {
+            Route::get('/', function() use ($locale) {
+                return redirect($locale);
+            });
+        }
+
     }
 });
 

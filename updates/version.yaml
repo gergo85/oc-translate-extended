@@ -8,3 +8,6 @@
     - Fixed default plugin settings
 1.0.4:
     - Added extended locale picker
+1.0.5:
+    - Bug fixes
+    - Added setting for homepage redirect
