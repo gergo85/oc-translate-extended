@@ -39,8 +39,7 @@ App::before(function($request) {
         if (Settings::get('prefer_user_session',true) && $localeSession) {
             $translator->setLocale($localeSession);
         } else {
-            if(Settings::get('browser_language_detection',true)) {
-
+            if(Settings::get('browser_language_detection',true) && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
                 // get the list of browser languages
                 $accepted = parseLanguageList($_SERVER['HTTP_ACCEPT_LANGUAGE']);
                 $available = Locale::listEnabled();
