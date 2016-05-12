@@ -1,14 +1,13 @@
 <?php namespace Excodus\TranslateExtended;
 
-use Backend;
 use System\Classes\PluginBase;
 use URL;
+
 /**
  * Translate Extended Plugin Information File
  */
 class Plugin extends PluginBase
 {
-
     /**
      * Returns information about this plugin.
      *
@@ -20,7 +19,8 @@ class Plugin extends PluginBase
             'name'        => 'Translate Extended',
             'description' => 'excodus.translateextended::lang.strings.plugin_desc',
             'author'      => 'Excodus',
-            'icon'        => 'icon-leaf'
+            'icon'        => 'icon-leaf',
+            'homepage'    => 'https://github.com/Excodus/oc-translate-extended'
         ];
     }
 
@@ -80,7 +80,7 @@ class Plugin extends PluginBase
 //    {
 //        return [
 //            'filters' => [
-//                'app' => [$this, 'appFilter'],
+//                'app' => [$this, 'appFilter']
 //            ]
 //        ];
 //    }
