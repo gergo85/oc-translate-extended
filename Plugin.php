@@ -20,7 +20,7 @@ class Plugin extends PluginBase
             'description' => 'excodus.translateextended::lang.strings.plugin_desc',
             'author'      => 'Excodus',
             'icon'        => 'icon-leaf',
-            'homepage'    => 'https://github.com/SaifurRahmanMohsin/Txt'
+            'homepage'    => 'https://github.com/Excodus/oc-translate-extended'
         ];
     }
 
